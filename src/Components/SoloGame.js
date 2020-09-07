@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import SettingsGame from './SettingsGame';
 import GameRound1 from './GameRound1';
+import GameRound2 from './GameRound2';
+import GameRound3 from './GameRound3';
 import DICTIONNAIRE from './Dictionnaire';
+
+const TIME = 5
 
 class SoloGame extends Component {
     constructor(props) {
@@ -56,20 +60,23 @@ class SoloGame extends Component {
         this.setState({wordsLeft: tab})
     }
 
-    startGameRound1 = () => {
+    startGameRound = () => {
         this.setState({word: this.selectWord()})
         this.setState({duringGame: 1})
-        this.setState({time: 5})
+        this.setState({time: TIME})
     }
 
-    startGameRound2 = () => {
-        const words = this.mixWords()
-        this.setState({words: words})
+    prepsGameRound = () => {
+        const { teamTurn, stepGame, nbEquipes } = this.state
+        this.mixWords()
         this.setState({wordsDiscover: []})
-        this.setState({duringGame: 1})
+        this.setState({duringGame: 0})
         this.setState({time: -1})
-        this.setState({teamTurn: 2})
-        this.setState({stepGame: 2})
+        if (teamTurn !== nbEquipes)
+            this.setState({teamTurn: teamTurn + 1})
+        else
+            this.setState({teamTurn: 1})
+        this.setState({stepGame: stepGame + 1})
     }
 
     mixWords = () => {
@@ -77,7 +84,6 @@ class SoloGame extends Component {
         const temp = [words.length]
         var i = 0
         var rand = 0
-        console.log(temp[2])
         while (i < words.length){
             rand = this.getRandomInt(words.length)
             if (!(temp.includes(words[rand]))){
@@ -85,9 +91,7 @@ class SoloGame extends Component {
                 i++
             }
         }
-        console.log(temp)
         this.setState({words: temp})
-        this.setState({word: temp[0]})
     }
 
     changeTeam = () => {
@@ -166,8 +170,8 @@ class SoloGame extends Component {
                         word={word}
                         nbEquipes={nbEquipes}
                         teamTurn={teamTurn}
-                        startGameRound1={this.startGameRound1}
-                        startGameRound2={this.startGameRound2}
+                        startGameRound={this.startGameRound}
+                        prepsGameRound={this.prepsGameRound}
                         duringGame={duringGame}
                         passWord={this.passWord}
                         time={time}
@@ -175,7 +179,30 @@ class SoloGame extends Component {
                     />
                 }
                 {(stepGame === 2) &&
-                    <div>Game Round 2</div>
+                    <GameRound2
+                        word={word}
+                        nbEquipes={nbEquipes}
+                        teamTurn={teamTurn}
+                        startGameRound={this.startGameRound}
+                        prepsGameRound={this.prepsGameRound}
+                        duringGame={duringGame}
+                        passWord={this.passWord}
+                        time={time}
+                        score={score}
+                    />
+                }
+                {(stepGame === 3) &&
+                    <GameRound3
+                        word={word}
+                        nbEquipes={nbEquipes}
+                        teamTurn={teamTurn}
+                        startGameRound={this.startGameRound}
+                        printScore={this.printScore}
+                        duringGame={duringGame}
+                        passWord={this.passWord}
+                        time={time}
+                        score={score}
+                    />
                 }
                 <Button onClick={() => this.props.onClick(0)} >Accueil</Button>
             </div>
