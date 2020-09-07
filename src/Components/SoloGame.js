@@ -6,6 +6,8 @@ import GameRound2 from './GameRound2';
 import GameRound3 from './GameRound3';
 import DICTIONNAIRE from './Dictionnaire';
 
+import './../css/App.css'
+
 const TIME = 5
 
 class SoloGame extends Component {
@@ -13,8 +15,8 @@ class SoloGame extends Component {
         super(props);
         this.state = {
             stepGame: 0,
-            nbEquipes: 0,
-            nbMots: 0,
+            nbEquipes: 2,
+            nbMots: 20,
             words: [],
             wordsDiscover: [],
             word: '',
@@ -101,7 +103,6 @@ class SoloGame extends Component {
             this.setState({teamTurn: 1})
         else
             this.setState({teamTurn: teamTurn + 1})
-        this.setState({word: this.selectWord()})
         this.setState({duringGame: 0})
         this.setState({time: -1})
     }
@@ -131,8 +132,12 @@ class SoloGame extends Component {
                 this.setState({duringGame: 2})
             }
         }
-        else if (id === 0)
-            this.setState({word: this.selectWord(1)})
+        else if (id === 0){
+            if (wordsDiscover.length === words.length - 1)
+                this.changeTeam()
+            else
+                this.setState({word: this.selectWord()})
+        }
     }
 
     selectWord = () => {
@@ -143,12 +148,15 @@ class SoloGame extends Component {
         else {
             while (word !== words[i])
                 i++
-            if (i !== words.length)
+            if (i !== words.length - 1)
                 i++
-            if (i === words.length)
-                    i = 0
+            else
+                i = 0
             while (wordsDiscover.includes(words[i])){
-                i++
+                if (i !== words.length - 1)
+                    i++
+                else
+                    i = 0
             }
             return words[i]
         }
@@ -157,7 +165,7 @@ class SoloGame extends Component {
     render() {
         const { stepGame, word, teamTurn, duringGame, time, score, nbEquipes } = this.state
         return (
-            <div>
+            <div className="App">
                 {(stepGame === 0) &&
                     <SettingsGame
                         getNbEquipes={this.getNbEquipes}
