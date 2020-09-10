@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import SettingsGame from './SettingsGame';
-import GameRound1 from './GameRound1';
-import GameRound2 from './GameRound2';
-import GameRound3 from './GameRound3';
+import GameRound from './GameRound';
 import DICTIONNAIRE from './Dictionnaire';
 
 import './../css/App.css'
+import 'bootstrap/dist/css/bootstrap.css'
 
-const TIME = 5
+const TIME = 45
 
 class SoloGame extends Component {
     constructor(props) {
@@ -24,7 +23,7 @@ class SoloGame extends Component {
             duringGame: 0,
             time: -1,
             score: [0, 0, 0, 0, 0],
-            gameRound: 0,
+            gameRound: 1,
         }
     }
 
@@ -57,19 +56,23 @@ class SoloGame extends Component {
     startGame = () => {
         const { nbMots } = this.state
         const tab = this.getWords(nbMots)
-        this.setState({stepGame: 1})
-        this.setState({words: tab})
-        this.setState({wordsLeft: tab})
+        this.setState({
+            stepGame: 1,
+            words: tab,
+            wordsLeft: tab
+        });
     }
 
     startGameRound = () => {
-        this.setState({word: this.selectWord()})
-        this.setState({duringGame: 1})
-        this.setState({time: TIME})
+        this.setState({
+            word: this.selectWord(), 
+            duringGame: 1,
+            time: TIME
+        });
     }
 
     prepsGameRound = () => {
-        const { teamTurn, stepGame, nbEquipes } = this.state
+        const { teamTurn, gameRound, nbEquipes } = this.state
         this.mixWords()
         this.setState({wordsDiscover: []})
         this.setState({duringGame: 0})
@@ -78,7 +81,7 @@ class SoloGame extends Component {
             this.setState({teamTurn: teamTurn + 1})
         else
             this.setState({teamTurn: 1})
-        this.setState({stepGame: stepGame + 1})
+        this.setState({gameRound: gameRound + 1})
     }
 
     mixWords = () => {
@@ -163,7 +166,8 @@ class SoloGame extends Component {
     }
 
     render() {
-        const { stepGame, word, teamTurn, duringGame, time, score, nbEquipes } = this.state
+        const { stepGame, word, teamTurn, duringGame, time, score, nbEquipes, gameRound } = this.state
+        console.log(stepGame)
         return (
             <div className="App">
                 {(stepGame === 0) &&
@@ -174,7 +178,7 @@ class SoloGame extends Component {
                     />
                 }
                 {(stepGame === 1) &&
-                    <GameRound1
+                    <GameRound
                         word={word}
                         nbEquipes={nbEquipes}
                         teamTurn={teamTurn}
@@ -184,32 +188,7 @@ class SoloGame extends Component {
                         passWord={this.passWord}
                         time={time}
                         score={score}
-                    />
-                }
-                {(stepGame === 2) &&
-                    <GameRound2
-                        word={word}
-                        nbEquipes={nbEquipes}
-                        teamTurn={teamTurn}
-                        startGameRound={this.startGameRound}
-                        prepsGameRound={this.prepsGameRound}
-                        duringGame={duringGame}
-                        passWord={this.passWord}
-                        time={time}
-                        score={score}
-                    />
-                }
-                {(stepGame === 3) &&
-                    <GameRound3
-                        word={word}
-                        nbEquipes={nbEquipes}
-                        teamTurn={teamTurn}
-                        startGameRound={this.startGameRound}
-                        printScore={this.printScore}
-                        duringGame={duringGame}
-                        passWord={this.passWord}
-                        time={time}
-                        score={score}
+                        gameRound={gameRound}
                     />
                 }
                 <Button onClick={() => this.props.onClick(0)} >Accueil</Button>
